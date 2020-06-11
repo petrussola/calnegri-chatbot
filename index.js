@@ -1,6 +1,9 @@
 // dependencies
 const express = require('express');
-require('dotenv').config();
+
+// helpers
+const config = require('./config');
+const bot = require('./bot');
 
 // instantiate express
 const server = express();
@@ -9,12 +12,17 @@ const server = express();
 server.use(express.json());
 
 // endpoints
+
+// test endpoint
 server.get('/', (req, res) => {
 	res.status(200).json({ message: 'ok' });
 });
 
-const port = process.env.PORT;
+server.post(`/${process.env.TELEGRAM_TOKEN}`, (req, res) => {
+	bot.processUpdate(req.body);
+	res.sendStatus(200);
+});
 
-server.listen(port, () => {
-	console.log(`\n\n Server listening on port ${port}\n\n`);
+server.listen(config.port, () => {
+	console.log(`\n\n Server listening on port ${config.port}\n\n`);
 });
